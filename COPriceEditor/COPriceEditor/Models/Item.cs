@@ -4,6 +4,7 @@
     {
         private string ItemLine;
         public string[] ItemLineData;
+        private string ItemAttrSeparator;
 
         public Item(string ItemLine, bool AutoImport = true)
         {
@@ -15,14 +16,21 @@
             }
         }
 
-        public void Import(string Separator = "@@")
+        public void Import()
         {
+            // Smart detection of the Separator pattern in itemtypes
+            string Separator = "@@";
+            if (!ItemLine.Contains(Separator))
+            {
+                Separator = " ";
+            }
+            ItemAttrSeparator = Separator;
             ItemLineData = ItemLine.Split(new string[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public void Export()
         {
-            this.ItemLine = string.Join("@@", this.ItemLineData);
+            this.ItemLine = string.Join(ItemAttrSeparator, this.ItemLineData);
         }
 
         public string Get(Item.Atribute atribute)

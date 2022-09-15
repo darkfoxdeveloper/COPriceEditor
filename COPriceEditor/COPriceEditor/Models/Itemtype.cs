@@ -4,7 +4,7 @@ namespace COPriceEditor.Models
 {
     public class Itemtype
     {
-        private readonly byte[] key = new byte[0x80];
+        private byte[] key = new byte[0x80];
         public List<Item> Items;
         public string SourceFile;
         public string TargetFile;
@@ -31,11 +31,19 @@ namespace COPriceEditor.Models
             this.Encrypt();
         }
 
-        public Itemtype(string SourceFile)
+        public void SaveItemsAs(string OutputFile)
         {
-            this.Items = new List<Item>();
-            this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
-            this.SourceFile = SourceFile;
+            Item[] items = this.Items.ToArray();
+            string[] lines = new string[items.Length];
+            for (int i = 0; i < items.Length; i++)
+            {
+                this.Items[i].Export();
+                lines[i] = this.Items[i].ToString();
+            }
+            string saveAsPath = Path.GetDirectoryName(OutputFile) + "/" + Path.GetFileNameWithoutExtension(OutputFile) + ".tmp"; // force save unencrypted and .tmp extension
+            string saveAsPathEncrypted = Path.GetDirectoryName(OutputFile) + "/" + Path.GetFileNameWithoutExtension(OutputFile) + ".dat"; // force save encrypted and .dat extension
+            File.WriteAllLines(saveAsPath, lines);
+            key = new byte[0x80];
             if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
             {
                 return;
@@ -45,6 +53,34 @@ namespace COPriceEditor.Models
             {
                 key[i] = (byte)(r.Next() % 0x100);
             }
+            byte[] b = File.ReadAllBytes(saveAsPath);
+            for (int i = 0; i < b.Length; i++)
+            {
+                int bits = i % 8;
+                int num = (byte)((b[i] >> (8 - bits)) + (b[i] << bits));
+                b[i] = (byte)(num ^ key[i % 0x80]);
+            }
+            File.WriteAllBytes(saveAsPathEncrypted, b);
+        }
+
+        public Itemtype(string SourceFile)
+        {
+            this.Items = new List<Item>();
+            this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
+            if (!SourceFile.EndsWith(".txt")) {
+                this.SourceFile = SourceFile;
+                if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+                {
+                    return;
+                }
+                MSRandom r = new(seed);
+                for (int i = 0; i < key.Length; i++)
+                {
+                    key[i] = (byte)(r.Next() % 0x100);
+                }
+                this.Decrypt();
+            }
+            this.LoadItems();
         }
         public void Decrypt()
         {
