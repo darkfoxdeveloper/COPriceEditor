@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.btnSelectPath = new Krypton.Toolkit.KryptonButton();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.lbxItems = new Krypton.Toolkit.KryptonListBox();
             this.tbxCPs = new Krypton.Toolkit.KryptonTextBox();
             this.lblCPs = new Krypton.Toolkit.KryptonLabel();
@@ -42,6 +41,9 @@
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainWorker = new System.ComponentModel.BackgroundWorker();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.tbxSearch = new Krypton.Toolkit.KryptonTextBox();
+            this.searchWorker = new System.ComponentModel.BackgroundWorker();
             this.kryptonStatusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -52,19 +54,14 @@
             this.btnSelectPath.Name = "btnSelectPath";
             this.btnSelectPath.Size = new System.Drawing.Size(457, 58);
             this.btnSelectPath.TabIndex = 0;
-            this.btnSelectPath.Values.Text = "Select Itemtype";
+            this.btnSelectPath.Values.Text = "Select client path";
             this.btnSelectPath.Click += new System.EventHandler(this.BtnSelectPath_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "itemtype.dat";
-            this.openFileDialog1.Filter = "Itemtype file|*.dat|Itemtype file decrypted|*.txt";
             // 
             // lbxItems
             // 
             this.lbxItems.Location = new System.Drawing.Point(12, 86);
             this.lbxItems.Name = "lbxItems";
-            this.lbxItems.Size = new System.Drawing.Size(301, 528);
+            this.lbxItems.Size = new System.Drawing.Size(301, 490);
             this.lbxItems.TabIndex = 1;
             this.lbxItems.SelectedIndexChanged += new System.EventHandler(this.LbxItems_SelectedIndexChanged);
             // 
@@ -155,11 +152,27 @@
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
+            // tbxSearch
+            // 
+            this.tbxSearch.CueHint.CueHintText = "Search...";
+            this.tbxSearch.CueHint.Padding = new System.Windows.Forms.Padding(0);
+            this.tbxSearch.Location = new System.Drawing.Point(12, 582);
+            this.tbxSearch.Name = "tbxSearch";
+            this.tbxSearch.Size = new System.Drawing.Size(301, 32);
+            this.tbxSearch.TabIndex = 10;
+            this.tbxSearch.TextChanged += new System.EventHandler(this.TbxSearch_TextChanged);
+            // 
+            // searchWorker
+            // 
+            this.searchWorker.WorkerReportsProgress = true;
+            this.searchWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.SearchWorker_DoWork);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 658);
+            this.Controls.Add(this.tbxSearch);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.kryptonStatusStrip1);
             this.Controls.Add(this.btnSave);
@@ -188,7 +201,6 @@
         #endregion
 
         private Krypton.Toolkit.KryptonButton btnSelectPath;
-        private OpenFileDialog openFileDialog1;
         private Krypton.Toolkit.KryptonListBox lbxItems;
         private Krypton.Toolkit.KryptonTextBox tbxCPs;
         private Krypton.Toolkit.KryptonLabel lblCPs;
@@ -200,5 +212,8 @@
         private ToolStripStatusLabel lblStatus;
         private System.ComponentModel.BackgroundWorker mainWorker;
         private PictureBox pictureBox1;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private Krypton.Toolkit.KryptonTextBox tbxSearch;
+        private System.ComponentModel.BackgroundWorker searchWorker;
     }
 }

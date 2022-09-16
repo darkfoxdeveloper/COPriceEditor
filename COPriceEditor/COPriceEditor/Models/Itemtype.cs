@@ -8,6 +8,31 @@ namespace COPriceEditor.Models
         public List<Item> Items;
         public string SourceFile;
         public string TargetFile;
+        private IniFile ItemMinIcon;
+        private string ClientPath;
+
+        public Itemtype(string SourceFile, string ClientPath)
+        {
+            this.ClientPath = ClientPath;
+            this.Items = new List<Item>();
+            this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
+            this.ItemMinIcon = new IniFile(Path.Combine(this.ClientPath, "ani", "ItemMinIcon.Ani"));
+            if (!SourceFile.EndsWith(".txt"))
+            {
+                this.SourceFile = SourceFile;
+                if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+                {
+                    return;
+                }
+                MSRandom r = new(seed);
+                for (int i = 0; i < key.Length; i++)
+                {
+                    key[i] = (byte)(r.Next() % 0x100);
+                }
+                this.Decrypt();
+            }
+            this.LoadItems();
+        }
         public void LoadItems()
         {
             string[] ItemsTxt = File.ReadAllLines(this.TargetFile);
@@ -62,25 +87,24 @@ namespace COPriceEditor.Models
             }
             File.WriteAllBytes(saveAsPathEncrypted, b);
         }
-
-        public Itemtype(string SourceFile)
+        public string GetImagePath(Item item)
         {
-            this.Items = new List<Item>();
-            this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
-            if (!SourceFile.EndsWith(".txt")) {
-                this.SourceFile = SourceFile;
-                if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+            string DDS = ItemMinIcon.GetValue("ItemDefault", "Frame0").Replace('/', Path.DirectorySeparatorChar);
+            string imagePath = Path.Combine(ClientPath, DDS);
+            try
+            {
+                DDS = ItemMinIcon.GetValue("Item" + item.Get(Item.Atribute.ID), "Frame0").Replace('/', Path.DirectorySeparatorChar);
+                string ddsPath = Path.Combine(ClientPath, DDS);
+                if (File.Exists(ddsPath))
                 {
-                    return;
+                    imagePath = ddsPath;
                 }
-                MSRandom r = new(seed);
-                for (int i = 0; i < key.Length; i++)
-                {
-                    key[i] = (byte)(r.Next() % 0x100);
-                }
-                this.Decrypt();
             }
-            this.LoadItems();
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return imagePath;
         }
         public void Decrypt()
         {

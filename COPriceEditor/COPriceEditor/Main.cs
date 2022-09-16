@@ -9,6 +9,8 @@ namespace COPriceEditor
         private bool SaveAs = false;
         private string SaveAsPath = "";
         private bool Open = false;
+        private bool CanSearch = false;
+        private List<string> OriginalItemList;
         public Main()
         {
             InitializeComponent();
@@ -16,15 +18,13 @@ namespace COPriceEditor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Example reader dds
-            DDSImage img = new DDSImage(@"D:\Cliente Doritos-Conquer\data\ItemMinIcon\116100.dds");
-            pictureBox1.Image = img.ToBitmap();
+            OriginalItemList = new List<string>();
         }
 
         private void BtnSelectPath_Click(object sender, EventArgs e)
         {
             Open = false;
-            DialogResult dRes = openFileDialog1.ShowDialog();
+            DialogResult dRes = folderBrowserDialog1.ShowDialog();
             if (dRes == DialogResult.OK)
             {
                 Open = true;
@@ -39,6 +39,9 @@ namespace COPriceEditor
             Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
             tbxCPs.Text = it.Get(Item.Atribute.ConquerPointsWorth);
             tbxMoney.Text = it.Get(Item.Atribute.GoldWorth);
+
+            DDSImage img = new DDSImage(CurrentItemtype.GetImagePath(it));
+            pictureBox1.Image = img.ToBitmap();
         }
 
         private void BtnSaveAs_Click(object sender, EventArgs e)
@@ -108,9 +111,12 @@ namespace COPriceEditor
                     lbxItems.Items.Clear();
                     btnSelectPath.Enabled = false;
                 }));
-                string path = openFileDialog1.FileName;
+                string path = Path.Combine(folderBrowserDialog1.SelectedPath, "ini", "itemtype.dat");
                 if (path == null) return;
-                CurrentItemtype = new(openFileDialog1.FileName);
+                if (File.Exists(path))
+                {
+                    CurrentItemtype = new(path, folderBrowserDialog1.SelectedPath);
+                }
                 CurrentItemtype.Items.ForEach(i => {
                     string sufix = "";
                     if (i.Get(Item.Atribute.ID).EndsWith("9"))
@@ -135,7 +141,9 @@ namespace COPriceEditor
                     }
                     this.Invoke(new Action(() =>
                     {
-                        lbxItems.Items.Add(i.Get(Item.Atribute.ID) + $" - [{i.Get(Item.Atribute.Name)}] {sufix}"); Thread.Sleep(0);
+                        string itemStr = i.Get(Item.Atribute.ID) + $" - [{i.Get(Item.Atribute.Name)}] {sufix}";
+                        OriginalItemList.Add(itemStr);
+                        lbxItems.Items.Add(itemStr);
                         lblStatus.Text = $"Loaded Item [{i.Get(Item.Atribute.ID)}]";
                     }));
                 });
@@ -144,6 +152,7 @@ namespace COPriceEditor
                     lblStatus.Text = $"{CurrentItemtype.Items.Count} Items loaded.";
                     btnSelectPath.Enabled = true;
                 }));
+                CanSearch = true;
             } else
             {
 
@@ -161,6 +170,47 @@ namespace COPriceEditor
         private void MainWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             lblStatus.Text = "Loading... " + e.ProgressPercentage;
+        }
+
+        private void TbxSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (CanSearch)
+            {
+                CanSearch = false;
+                searchWorker.RunWorkerAsync();
+            }
+        }
+
+        private void SearchWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                List<string> itemStrsAdd = new List<string>();
+                if (tbxSearch.Text.Length <= 0)
+                {
+                    lbxItems.Items.Clear();
+                    foreach (string itemStr in OriginalItemList)
+                    {
+                        lbxItems.Items.Add(itemStr);
+                    }
+                }
+                else
+                {
+                    foreach (string itemStr in OriginalItemList)
+                    {
+                        if (itemStr.Contains(tbxSearch.Text))
+                        {
+                            itemStrsAdd.Add(itemStr);
+                        }
+                    }
+                    lbxItems.Items.Clear();
+                    foreach (string itemStr in itemStrsAdd)
+                    {
+                        lbxItems.Items.Add(itemStr);
+                    }
+                }
+                CanSearch = true;
+            }));
         }
     }
 }
