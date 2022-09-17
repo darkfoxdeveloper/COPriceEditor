@@ -1,5 +1,6 @@
 using COPriceEditor.Models;
 using DDSReader;
+using System.ComponentModel;
 
 namespace COPriceEditor
 {
@@ -11,11 +12,11 @@ namespace COPriceEditor
         private bool Open = false;
         private bool CanSearch = false;
         private List<string> OriginalItemList;
-        private Config sett;
         public Main()
         {
             InitializeComponent();
-            sett = new();
+            Models.Config.ConfigForm = new();
+            Models.Config.LoginConfigForm = new();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -23,18 +24,43 @@ namespace COPriceEditor
             OriginalItemList = new List<string>();
             if (File.Exists("Config.json"))
             {
-                Models.Config.ItemAttributes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.ItemAttribute>>(File.ReadAllText("Config.json"));
-                foreach(ItemAttribute itemAttr in Models.Config.ItemAttributes)
-                {
-                    Krypton.Toolkit.KryptonLabel newLbl = new();
-                    newLbl.Text = itemAttr.Name;
-                    Krypton.Toolkit.KryptonTextBox newTbx = new();
-                    newTbx.Name = "Attr" + itemAttr.Name;
-                    panelFields.Controls.Add(newLbl);
-                    panelFields.Controls.Add(newTbx);
-                    newTbx.Tag = itemAttr;
-                    newTbx.TextChanged += NewTbx_TextChanged;
-                }
+                Models.Config.ItemAttributes = Newtonsoft.Json.JsonConvert.DeserializeObject<BindingList<ItemAttribute>>(File.ReadAllText("Config.json"));
+                ReloadFields();
+            }
+            ReloadFieldsDesign();
+            Models.LicenseManager lMan = new();
+            Models.Config.RegisteredLicenseId = "bdff59d4-65e2-4e82-a828-4fbaac37144a";
+            if (!lMan.IsValidLicense(Models.Config.RegisteredLicenseId))
+            {
+                Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is not valid and cannot run this App. {System.Environment.NewLine} License Expiration: {lMan.GetLicenseFromId(Models.Config.RegisteredLicenseId).LicenseExpiration} {System.Environment.NewLine} Enabled: {lMan.GetLicenseFromId(Models.Config.RegisteredLicenseId).Enabled}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+                Application.Exit();
+            }
+        }
+
+        public void ReloadFieldsDesign()
+        {
+            if (!Models.Config.EnablePreviewItemIcons)
+            {
+                panelFields.Size = new Size(254, 550);
+            } else
+            {
+                panelFields.Size = new Size(254, 426);
+            }
+        }
+
+        public void ReloadFields()
+        {
+            panelFields.Controls.Clear();
+            foreach (ItemAttribute itemAttr in Models.Config.ItemAttributes)
+            {
+                Krypton.Toolkit.KryptonLabel newLbl = new();
+                newLbl.Text = itemAttr.Name;
+                Krypton.Toolkit.KryptonTextBox newTbx = new();
+                newTbx.Name = "Attr" + itemAttr.Name;
+                panelFields.Controls.Add(newLbl);
+                panelFields.Controls.Add(newTbx);
+                newTbx.Tag = itemAttr;
+                newTbx.TextChanged += NewTbx_TextChanged;
             }
         }
 
@@ -291,12 +317,12 @@ namespace COPriceEditor
         {
             if (keyData == Keys.F1)
             {
-                if (sett.IsDisposed)
+                if (Models.Config.LoginConfigForm.IsDisposed)
                 {
-                    sett = new Config();
+                    Models.Config.LoginConfigForm = new LoginConfig();
                 }
-                sett.Show();
-                return true;    // indicate that you handled this keystroke
+                Models.Config.LoginConfigForm.Show();
+                return true;
             }
 
             // Call the base class

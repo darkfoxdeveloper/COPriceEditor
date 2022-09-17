@@ -82,6 +82,7 @@
             this.Controls.Add(this.gridConfigs);
             this.Controls.Add(this.btnPreviewIcons);
             this.Controls.Add(this.btnCreateConfig);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Config";
             this.Text = "Settings";

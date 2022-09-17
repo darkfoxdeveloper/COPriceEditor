@@ -1,9 +1,14 @@
-﻿namespace COPriceEditor.Models
+﻿using System.ComponentModel;
+
+namespace COPriceEditor.Models
 {
     public static class Config
     {
-        public static List<ItemAttribute> ItemAttributes { get; set; }
+        public static BindingList<ItemAttribute> ItemAttributes { get; set; }
         public static bool EnablePreviewItemIcons = false;
+        public static COPriceEditor.Config ConfigForm;
+        public static LoginConfig LoginConfigForm;
+        public static string RegisteredLicenseId { get; set; }
     }
 
     public class ItemAttribute

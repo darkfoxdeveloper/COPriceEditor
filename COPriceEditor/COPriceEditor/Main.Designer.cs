@@ -93,7 +93,7 @@
             this.kryptonStatusStrip1.Name = "kryptonStatusStrip1";
             this.kryptonStatusStrip1.ProgressBars = null;
             this.kryptonStatusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.ManagerRenderMode;
-            this.kryptonStatusStrip1.Size = new System.Drawing.Size(585, 32);
+            this.kryptonStatusStrip1.Size = new System.Drawing.Size(582, 32);
             this.kryptonStatusStrip1.TabIndex = 8;
             this.kryptonStatusStrip1.Text = "kryptonStatusStrip1";
             // 
@@ -164,12 +164,13 @@
             this.panelFields.Name = "panelFields";
             this.panelFields.Size = new System.Drawing.Size(254, 426);
             this.panelFields.TabIndex = 0;
+            this.panelFields.WrapContents = false;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(585, 821);
+            this.ClientSize = new System.Drawing.Size(582, 821);
             this.Controls.Add(this.panelFields);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.cbxDecryptedMode);

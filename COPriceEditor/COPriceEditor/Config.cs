@@ -1,4 +1,6 @@
-﻿namespace COPriceEditor
+﻿using System.ComponentModel;
+
+namespace COPriceEditor
 {
     public partial class Config : Krypton.Toolkit.KryptonForm
     {
@@ -11,7 +13,7 @@
         {
             if (File.Exists("Config.json"))
             {
-                Models.Config.ItemAttributes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.ItemAttribute>>(File.ReadAllText("Config.json"));
+                Models.Config.ItemAttributes = Newtonsoft.Json.JsonConvert.DeserializeObject<BindingList<Models.ItemAttribute>>(File.ReadAllText("Config.json"));
                 btnCreateConfig.Enabled = false;
             } else
             {
@@ -23,11 +25,12 @@
             {
                 btnSaveConfig.Enabled = false;
             }
+            //gridConfigs.AllowUserToAddRows = true;
         }
 
         private void BtnCreateConfig_Click(object sender, EventArgs e)
         {
-            Models.Config.ItemAttributes = new List<Models.ItemAttribute>();
+            Models.Config.ItemAttributes = new BindingList<Models.ItemAttribute>();
             Models.Config.ItemAttributes.Add(new Models.ItemAttribute() { Name = "Name", ItemtypeIndex = 1, TypeField = "Text" });
             Models.Config.ItemAttributes.Add(new Models.ItemAttribute() { Name = "Description", ItemtypeIndex = 54, TypeField = "Text" });
             Models.Config.ItemAttributes.Add(new Models.ItemAttribute() { Name = "Class", ItemtypeIndex = 2, TypeField = "Number" });
@@ -40,6 +43,7 @@
         {
             Models.Config.EnablePreviewItemIcons = true;
             btnPreviewIcons.Enabled = !Models.Config.EnablePreviewItemIcons;
+            ((Main)Owner).ReloadFieldsDesign();
         }
 
         private void BtnSaveConfig_Click(object sender, EventArgs e)
@@ -47,6 +51,7 @@
             if (Models.Config.ItemAttributes != null)
             {
                 File.WriteAllText("Config.json", Newtonsoft.Json.JsonConvert.SerializeObject(Models.Config.ItemAttributes));
+                ((Main)Owner).ReloadFields();
             }
         }
     }
