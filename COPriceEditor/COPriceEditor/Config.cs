@@ -18,6 +18,11 @@
                 btnCreateConfig.Enabled = true;
             }
             btnPreviewIcons.Enabled = !Models.Config.EnablePreviewItemIcons;
+            gridConfigs.DataSource = Models.Config.ItemAttributes;
+            if (Models.Config.ItemAttributes == null)
+            {
+                btnSaveConfig.Enabled = false;
+            }
         }
 
         private void BtnCreateConfig_Click(object sender, EventArgs e)
@@ -35,6 +40,14 @@
         {
             Models.Config.EnablePreviewItemIcons = true;
             btnPreviewIcons.Enabled = !Models.Config.EnablePreviewItemIcons;
+        }
+
+        private void BtnSaveConfig_Click(object sender, EventArgs e)
+        {
+            if (Models.Config.ItemAttributes != null)
+            {
+                File.WriteAllText("Config.json", Newtonsoft.Json.JsonConvert.SerializeObject(Models.Config.ItemAttributes));
+            }
         }
     }
 }

@@ -52,7 +52,7 @@
             // 
             this.btnSelectPath.Location = new System.Drawing.Point(12, 12);
             this.btnSelectPath.Name = "btnSelectPath";
-            this.btnSelectPath.Size = new System.Drawing.Size(702, 58);
+            this.btnSelectPath.Size = new System.Drawing.Size(561, 58);
             this.btnSelectPath.TabIndex = 0;
             this.btnSelectPath.Values.Text = "Select client path";
             this.btnSelectPath.Click += new System.EventHandler(this.BtnSelectPath_Click);
@@ -61,24 +61,24 @@
             // 
             this.lbxItems.Location = new System.Drawing.Point(12, 76);
             this.lbxItems.Name = "lbxItems";
-            this.lbxItems.Size = new System.Drawing.Size(301, 490);
+            this.lbxItems.Size = new System.Drawing.Size(301, 663);
             this.lbxItems.TabIndex = 1;
             this.lbxItems.SelectedIndexChanged += new System.EventHandler(this.LbxItems_SelectedIndexChanged);
             // 
             // btnSaveAs
             // 
-            this.btnSaveAs.Location = new System.Drawing.Point(319, 552);
+            this.btnSaveAs.Location = new System.Drawing.Point(319, 725);
             this.btnSaveAs.Name = "btnSaveAs";
-            this.btnSaveAs.Size = new System.Drawing.Size(153, 52);
+            this.btnSaveAs.Size = new System.Drawing.Size(254, 52);
             this.btnSaveAs.TabIndex = 6;
             this.btnSaveAs.Values.Text = "Save as...";
             this.btnSaveAs.Click += new System.EventHandler(this.BtnSaveAs_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(401, 494);
+            this.btnSave.Location = new System.Drawing.Point(451, 667);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(71, 52);
+            this.btnSave.Size = new System.Drawing.Size(122, 52);
             this.btnSave.TabIndex = 7;
             this.btnSave.Values.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
@@ -89,11 +89,11 @@
             this.kryptonStatusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.kryptonStatusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.kryptonStatusStrip1.Location = new System.Drawing.Point(0, 610);
+            this.kryptonStatusStrip1.Location = new System.Drawing.Point(0, 789);
             this.kryptonStatusStrip1.Name = "kryptonStatusStrip1";
             this.kryptonStatusStrip1.ProgressBars = null;
             this.kryptonStatusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.ManagerRenderMode;
-            this.kryptonStatusStrip1.Size = new System.Drawing.Size(726, 32);
+            this.kryptonStatusStrip1.Size = new System.Drawing.Size(585, 32);
             this.kryptonStatusStrip1.TabIndex = 8;
             this.kryptonStatusStrip1.Text = "kryptonStatusStrip1";
             // 
@@ -111,9 +111,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(318, 357);
+            this.pictureBox1.Location = new System.Drawing.Point(451, 543);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(153, 131);
+            this.pictureBox1.Size = new System.Drawing.Size(122, 118);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
@@ -122,7 +122,7 @@
             // 
             this.tbxSearch.CueHint.CueHintText = "Search...";
             this.tbxSearch.CueHint.Padding = new System.Windows.Forms.Padding(0);
-            this.tbxSearch.Location = new System.Drawing.Point(12, 572);
+            this.tbxSearch.Location = new System.Drawing.Point(12, 745);
             this.tbxSearch.Name = "tbxSearch";
             this.tbxSearch.Size = new System.Drawing.Size(301, 32);
             this.tbxSearch.TabIndex = 10;
@@ -149,9 +149,9 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(319, 494);
+            this.btnDelete.Location = new System.Drawing.Point(319, 667);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(76, 52);
+            this.btnDelete.Size = new System.Drawing.Size(126, 52);
             this.btnDelete.TabIndex = 12;
             this.btnDelete.Values.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
@@ -159,16 +159,17 @@
             // panelFields
             // 
             this.panelFields.AutoScroll = true;
-            this.panelFields.Location = new System.Drawing.Point(488, 76);
+            this.panelFields.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.panelFields.Location = new System.Drawing.Point(319, 111);
             this.panelFields.Name = "panelFields";
-            this.panelFields.Size = new System.Drawing.Size(227, 528);
+            this.panelFields.Size = new System.Drawing.Size(254, 426);
             this.panelFields.TabIndex = 0;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 642);
+            this.ClientSize = new System.Drawing.Size(585, 821);
             this.Controls.Add(this.panelFields);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.cbxDecryptedMode);
