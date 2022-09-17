@@ -76,11 +76,17 @@ namespace COPriceEditor
                         if (dRes == DialogResult.OK)
                         {
                             Open = true;
+                            btnSave.Enabled = false;
+                            btnSaveAs.Enabled = false;
+                            btnDelete.Enabled = false;
                             this.mainWorker.RunWorkerAsync();
                         }
                     } else
                     {
                         Open = true;
+                        btnSave.Enabled = false;
+                        btnSaveAs.Enabled = false;
+                        btnDelete.Enabled = false;
                         this.mainWorker.RunWorkerAsync();
                     }
                 }
@@ -90,6 +96,9 @@ namespace COPriceEditor
                 if (dRes == DialogResult.OK)
                 {
                     Open = true;
+                    btnSave.Enabled = false;
+                    btnSaveAs.Enabled = false;
+                    btnDelete.Enabled = false;
                     this.mainWorker.RunWorkerAsync();
                 }
             }
@@ -207,18 +216,22 @@ namespace COPriceEditor
                 {
                     lblStatus.Text = $"{CurrentItemtype.Items.Count} Items loaded.";
                     btnSelectPath.Enabled = true;
+                    btnSave.Enabled = true;
+                    btnSaveAs.Enabled = true;
+                    btnDelete.Enabled = true;
                 }));
                 CanSearch = true;
             } else
             {
-
                 if (SaveAs)
                 {
-                    CurrentItemtype.SaveItemsAs(SaveAsPath);
+                    string path = CurrentItemtype.SaveItemsAs(SaveAsPath);
+                    lblStatus.Text = $"Saved in {path}";
                 }
                 else
                 {
                     CurrentItemtype.SaveItems();
+                    lblStatus.Text = "Saved";
                 }
             }
         }

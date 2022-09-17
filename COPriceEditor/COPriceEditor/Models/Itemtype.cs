@@ -90,7 +90,7 @@ namespace COPriceEditor.Models
             }
         }
 
-        public void SaveItemsAs(string OutputFile)
+        public string SaveItemsAs(string OutputFile)
         {
             Item[] items = this.Items.ToArray();
             string[] lines = new string[items.Length];
@@ -101,25 +101,33 @@ namespace COPriceEditor.Models
             }
             string saveAsPath = Path.GetDirectoryName(OutputFile) + "/" + Path.GetFileNameWithoutExtension(OutputFile) + ".tmp"; // force save unencrypted and .tmp extension
             string saveAsPathEncrypted = Path.GetDirectoryName(OutputFile) + "/" + Path.GetFileNameWithoutExtension(OutputFile) + ".dat"; // force save encrypted and .dat extension
-            File.WriteAllLines(saveAsPath, lines);
-            key = new byte[0x80];
-            if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+            if (this.DecryptedMode)
             {
-                return;
-            }
-            MSRandom r = new(seed);
-            for (int i = 0; i < key.Length; i++)
+                saveAsPath = Path.GetDirectoryName(OutputFile) + "/" + Path.GetFileNameWithoutExtension(OutputFile) + ".txt"; // force save unencrypted and .tmp extension
+                File.WriteAllLines(saveAsPath, lines);
+            } else
             {
-                key[i] = (byte)(r.Next() % 0x100);
+                File.WriteAllLines(saveAsPath, lines);
+                key = new byte[0x80];
+                if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+                {
+                    return "[ERROR]";
+                }
+                MSRandom r = new(seed);
+                for (int i = 0; i < key.Length; i++)
+                {
+                    key[i] = (byte)(r.Next() % 0x100);
+                }
+                byte[] b = File.ReadAllBytes(saveAsPath);
+                for (int i = 0; i < b.Length; i++)
+                {
+                    int bits = i % 8;
+                    int num = (byte)((b[i] >> (8 - bits)) + (b[i] << bits));
+                    b[i] = (byte)(num ^ key[i % 0x80]);
+                }
+                File.WriteAllBytes(saveAsPathEncrypted, b);
             }
-            byte[] b = File.ReadAllBytes(saveAsPath);
-            for (int i = 0; i < b.Length; i++)
-            {
-                int bits = i % 8;
-                int num = (byte)((b[i] >> (8 - bits)) + (b[i] << bits));
-                b[i] = (byte)(num ^ key[i % 0x80]);
-            }
-            File.WriteAllBytes(saveAsPathEncrypted, b);
+            return this.DecryptedMode ? saveAsPath : saveAsPathEncrypted;
         }
         public void RemoveItem(Item item)
         {

@@ -56,7 +56,13 @@
 
         public string Set(uint index, string value)
         {
-            return ItemLineData[index] = value;
+            if (ItemLineData.Length >= index)
+            {
+                return ItemLineData[index] = value;
+            } else
+            {
+                return value;
+            }
         }
 
         public void ChangePrice(int type = 0, uint value = 0)//0=money/1=conquerpoints
