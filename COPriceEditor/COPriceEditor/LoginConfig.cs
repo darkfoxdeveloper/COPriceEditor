@@ -26,7 +26,7 @@
                 Models.Config.ConfigForm.Show(this);
             } else
             {
-                Krypton.Toolkit.KryptonMessageBox.Show("Invalid username or password...", "Login FAIL", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+                Krypton.Toolkit.KryptonMessageBox.Show("Invalid LicenseId", "Login FAIL", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
             }
         }
     }
