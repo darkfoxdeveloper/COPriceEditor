@@ -35,7 +35,28 @@
 
         public string Get(Item.Atribute atribute)
         {
-            return ItemLineData[(int)atribute];
+            return ItemLineData[(uint)atribute];
+        }
+
+        public string Get(uint index)
+        {
+            if (ItemLineData.Length >= index)
+            {
+                return ItemLineData[index];
+            } else
+            {
+                return String.Empty;
+            }
+        }
+
+        public string Set(Item.Atribute atribute, string value)
+        {
+            return ItemLineData[(uint)atribute] = value;
+        }
+
+        public string Set(uint index, string value)
+        {
+            return ItemLineData[index] = value;
         }
 
         public void ChangePrice(int type = 0, uint value = 0)//0=money/1=conquerpoints

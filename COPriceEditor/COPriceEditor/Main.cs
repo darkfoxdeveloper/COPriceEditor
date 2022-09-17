@@ -11,37 +11,113 @@ namespace COPriceEditor
         private bool Open = false;
         private bool CanSearch = false;
         private List<string> OriginalItemList;
+        private Config sett;
         public Main()
         {
             InitializeComponent();
+            sett = new();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             OriginalItemList = new List<string>();
+            if (File.Exists("Config.json"))
+            {
+                Models.Config.ItemAttributes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Models.ItemAttribute>>(File.ReadAllText("Config.json"));
+                foreach(ItemAttribute itemAttr in Models.Config.ItemAttributes)
+                {
+                    Krypton.Toolkit.KryptonLabel newLbl = new();
+                    newLbl.Text = itemAttr.Name;
+                    Krypton.Toolkit.KryptonTextBox newTbx = new();
+                    newTbx.Name = "Attr" + itemAttr.Name;
+                    panelFields.Controls.Add(newLbl);
+                    panelFields.Controls.Add(newTbx);
+                    newTbx.Tag = itemAttr;
+                    newTbx.TextChanged += NewTbx_TextChanged;
+                }
+            }
+        }
+
+        private void NewTbx_TextChanged(object? sender, EventArgs e)
+        {
+
+            if (lbxItems.SelectedItem == null) return;
+            Krypton.Toolkit.KryptonTextBox input = ((Krypton.Toolkit.KryptonTextBox)sender);
+            bool validInputValue = true;
+            ItemAttribute iAttr = ((ItemAttribute)input.Tag);
+            if (iAttr.TypeField == "text")
+            {
+                validInputValue = true;
+            }
+            if (iAttr.TypeField == "number")
+            {
+                validInputValue = int.TryParse(input.Text, out int r);
+            }
+            if (validInputValue)
+            {
+                string ID = lbxItems.SelectedItem.ToString().Split("-")[0];
+                Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
+                uint index = ((ItemAttribute)input.Tag).ItemtypeIndex;
+                it.Set(index, input.Text);
+            }
         }
 
         private void BtnSelectPath_Click(object sender, EventArgs e)
         {
             Open = false;
-            DialogResult dRes = folderBrowserDialog1.ShowDialog();
-            if (dRes == DialogResult.OK)
+            if (cbxDecryptedMode.Checked)
             {
-                Open = true;
-                this.mainWorker.RunWorkerAsync();
+                DialogResult dResItemtype = itemtypeDatSelector.ShowDialog();
+                if (dResItemtype == DialogResult.OK)
+                {
+                    if (Models.Config.EnablePreviewItemIcons)
+                    {
+                        DialogResult dRes = folderBrowserDialog1.ShowDialog();
+                        if (dRes == DialogResult.OK)
+                        {
+                            Open = true;
+                            this.mainWorker.RunWorkerAsync();
+                        }
+                    } else
+                    {
+                        Open = true;
+                        this.mainWorker.RunWorkerAsync();
+                    }
+                }
+            } else
+            {
+                DialogResult dRes = folderBrowserDialog1.ShowDialog();
+                if (dRes == DialogResult.OK)
+                {
+                    Open = true;
+                    this.mainWorker.RunWorkerAsync();
+                }
             }
         }
 
         private void LbxItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             Krypton.Toolkit.KryptonListBox lbox = (Krypton.Toolkit.KryptonListBox)sender;
+            if (lbox.SelectedItem == null) return;
             string ID = lbox.SelectedItem.ToString().Split("-")[0];
             Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
-            tbxCPs.Text = it.Get(Item.Atribute.ConquerPointsWorth);
-            tbxMoney.Text = it.Get(Item.Atribute.GoldWorth);
 
-            DDSImage img = new DDSImage(CurrentItemtype.GetImagePath(it));
-            pictureBox1.Image = img.ToBitmap();
+            foreach(ItemAttribute itemAttr in Models.Config.ItemAttributes)
+            {
+                foreach(Control c in panelFields.Controls)
+                {
+                    if (c.Name == "Attr" + itemAttr.Name)
+                    {
+                        c.Text = it.Get(itemAttr.ItemtypeIndex);
+                    }
+                }
+            }
+
+            if (Models.Config.EnablePreviewItemIcons)
+            {
+                DDSImage img = new DDSImage(CurrentItemtype.GetImagePath(it));
+                pictureBox1.Image = img.ToBitmap();
+            }
         }
 
         private void BtnSaveAs_Click(object sender, EventArgs e)
@@ -77,30 +153,6 @@ namespace COPriceEditor
             }
         }
 
-        private void TbxCPs_TextChanged(object sender, EventArgs e)
-        {
-            if (lbxItems.SelectedItem == null) return;
-            Krypton.Toolkit.KryptonTextBox input = ((Krypton.Toolkit.KryptonTextBox)sender);
-            if (int.TryParse(input.Text, out int r))
-            {
-                string ID = lbxItems.SelectedItem.ToString().Split("-")[0];
-                Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
-                it.ChangePrice(1, uint.Parse(input.Text));
-            }
-        }
-
-        private void tbxMoney_TextChanged(object sender, EventArgs e)
-        {
-            if (lbxItems.SelectedItem == null) return;
-            Krypton.Toolkit.KryptonTextBox input = ((Krypton.Toolkit.KryptonTextBox)sender);
-            if (int.TryParse(input.Text, out int r))
-            {
-                string ID = lbxItems.SelectedItem.ToString().Split("-")[0];
-                Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
-                it.ChangePrice(0, uint.Parse(input.Text));
-            }
-        }
-
         private void MainWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             if (Open)
@@ -112,10 +164,14 @@ namespace COPriceEditor
                     btnSelectPath.Enabled = false;
                 }));
                 string path = Path.Combine(folderBrowserDialog1.SelectedPath, "ini", "itemtype.dat");
+                if (cbxDecryptedMode.Checked)
+                {
+                    path = itemtypeDatSelector.FileName;
+                }
                 if (path == null) return;
                 if (File.Exists(path))
                 {
-                    CurrentItemtype = new(path, folderBrowserDialog1.SelectedPath);
+                    CurrentItemtype = new(path, folderBrowserDialog1.SelectedPath, cbxDecryptedMode.Checked);
                 }
                 CurrentItemtype.Items.ForEach(i => {
                     string sufix = "";
@@ -211,6 +267,38 @@ namespace COPriceEditor
                 }
                 CanSearch = true;
             }));
+        }
+
+        private void CbxDecryptedMode_CheckedChanged(object sender, EventArgs e)
+        {
+            btnSelectPath.Text = cbxDecryptedMode.Checked ? "Select Itemtype.txt" : "Select client path";
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F1)
+            {
+                if (sett.IsDisposed)
+                {
+                    sett = new Config();
+                }
+                sett.Show();
+                return true;    // indicate that you handled this keystroke
+            }
+
+            // Call the base class
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if (CanSearch)
+            {
+                string ID = lbxItems.SelectedItem.ToString().Split("-")[0];
+                Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
+                lbxItems.Items.Remove(lbxItems.SelectedItem);
+                CurrentItemtype.RemoveItemByID(uint.Parse(ID));
+            }
         }
     }
 }

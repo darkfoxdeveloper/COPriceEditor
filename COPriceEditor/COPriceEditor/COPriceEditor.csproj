@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Krypton.Toolkit" Version="65.22.6.152" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Pfim" Version="0.11.1" />
   </ItemGroup>
 

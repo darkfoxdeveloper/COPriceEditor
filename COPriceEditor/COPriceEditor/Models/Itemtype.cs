@@ -10,13 +10,44 @@ namespace COPriceEditor.Models
         public string TargetFile;
         private IniFile ItemMinIcon;
         private string ClientPath;
+        private bool DecryptedMode;
 
         public Itemtype(string SourceFile, string ClientPath)
         {
             this.ClientPath = ClientPath;
             this.Items = new List<Item>();
             this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
-            this.ItemMinIcon = new IniFile(Path.Combine(this.ClientPath, "ani", "ItemMinIcon.Ani"));
+            if (Config.EnablePreviewItemIcons)
+            {
+                this.ItemMinIcon = new IniFile(Path.Combine(this.ClientPath, "ani", "ItemMinIcon.Ani"));
+            }
+            if (!SourceFile.EndsWith(".txt"))
+            {
+                this.SourceFile = SourceFile;
+                if (!int.TryParse("2537", NumberStyles.HexNumber, null, out int seed))
+                {
+                    return;
+                }
+                MSRandom r = new(seed);
+                for (int i = 0; i < key.Length; i++)
+                {
+                    key[i] = (byte)(r.Next() % 0x100);
+                }
+                this.Decrypt();
+            }
+            this.LoadItems();
+        }
+
+        public Itemtype(string SourceFile, string ClientPath, bool DecryptedMode)
+        {
+            this.ClientPath = ClientPath;
+            this.DecryptedMode = DecryptedMode;
+            this.Items = new List<Item>();
+            this.TargetFile = Path.GetDirectoryName(SourceFile) + "/" + Path.GetFileNameWithoutExtension(SourceFile) + ".txt";
+            if (Config.EnablePreviewItemIcons)
+            {
+                this.ItemMinIcon = new IniFile(Path.Combine(this.ClientPath, "ani", "ItemMinIcon.Ani"));
+            }
             if (!SourceFile.EndsWith(".txt"))
             {
                 this.SourceFile = SourceFile;
@@ -53,7 +84,10 @@ namespace COPriceEditor.Models
                 lines[i] = this.Items[i].ToString();
             }
             File.WriteAllLines(this.TargetFile, lines);
-            this.Encrypt();
+            if (!this.DecryptedMode)
+            {
+                this.Encrypt();
+            }
         }
 
         public void SaveItemsAs(string OutputFile)
@@ -86,6 +120,18 @@ namespace COPriceEditor.Models
                 b[i] = (byte)(num ^ key[i % 0x80]);
             }
             File.WriteAllBytes(saveAsPathEncrypted, b);
+        }
+        public void RemoveItem(Item item)
+        {
+            this.Items.Remove(item);
+        }
+        public void RemoveItemByID(uint ID)
+        {
+            Item i = this.Items.Where(x => x.Get(Item.Atribute.ID) == ID.ToString()).FirstOrDefault();
+            if (i != null)
+            {
+                this.RemoveItem(i);
+            }
         }
         public string GetImagePath(Item item)
         {
