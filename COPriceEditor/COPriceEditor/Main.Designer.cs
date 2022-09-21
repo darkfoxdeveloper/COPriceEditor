@@ -44,6 +44,7 @@
             this.itemtypeDatSelector = new System.Windows.Forms.OpenFileDialog();
             this.btnDelete = new Krypton.Toolkit.KryptonButton();
             this.panelFields = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnSearch = new Krypton.Toolkit.KryptonButton();
             this.kryptonStatusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -124,9 +125,8 @@
             this.tbxSearch.CueHint.Padding = new System.Windows.Forms.Padding(0);
             this.tbxSearch.Location = new System.Drawing.Point(12, 745);
             this.tbxSearch.Name = "tbxSearch";
-            this.tbxSearch.Size = new System.Drawing.Size(301, 32);
+            this.tbxSearch.Size = new System.Drawing.Size(230, 32);
             this.tbxSearch.TabIndex = 10;
-            this.tbxSearch.TextChanged += new System.EventHandler(this.TbxSearch_TextChanged);
             // 
             // searchWorker
             // 
@@ -166,11 +166,21 @@
             this.panelFields.TabIndex = 0;
             this.panelFields.WrapContents = false;
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(248, 745);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(65, 32);
+            this.btnSearch.TabIndex = 13;
+            this.btnSearch.Values.Text = "Search";
+            this.btnSearch.Click += new System.EventHandler(this.BtnSearch_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 821);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.panelFields);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.cbxDecryptedMode);
@@ -213,5 +223,6 @@
         private OpenFileDialog itemtypeDatSelector;
         private Krypton.Toolkit.KryptonButton btnDelete;
         private FlowLayoutPanel panelFields;
+        private Krypton.Toolkit.KryptonButton btnSearch;
     }
 }

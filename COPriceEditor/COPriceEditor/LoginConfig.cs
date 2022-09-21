@@ -9,9 +9,6 @@
 
         private void LoginConfig_Load(object sender, EventArgs e)
         {
-            //List<Models.License> licenses = new();
-            //licenses.Add(new Models.License() { LicenseId = Guid.NewGuid().ToString(), LicenseExpiration = DateTime.Now.AddYears(1), Enabled = true });
-            //File.WriteAllText("Licenses.json", Newtonsoft.Json.JsonConvert.SerializeObject(licenses));//
         }
 
         private void BtnLogin_Click(object sender, EventArgs e)

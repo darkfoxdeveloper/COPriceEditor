@@ -105,6 +105,7 @@ namespace COPriceEditor
                             btnSave.Enabled = false;
                             btnSaveAs.Enabled = false;
                             btnDelete.Enabled = false;
+                            btnSearch.Enabled = false;
                             this.mainWorker.RunWorkerAsync();
                         }
                     } else
@@ -113,6 +114,7 @@ namespace COPriceEditor
                         btnSave.Enabled = false;
                         btnSaveAs.Enabled = false;
                         btnDelete.Enabled = false;
+                        btnSearch.Enabled = false;
                         this.mainWorker.RunWorkerAsync();
                     }
                 }
@@ -125,6 +127,7 @@ namespace COPriceEditor
                     btnSave.Enabled = false;
                     btnSaveAs.Enabled = false;
                     btnDelete.Enabled = false;
+                    btnSearch.Enabled = false;
                     this.mainWorker.RunWorkerAsync();
                 }
             }
@@ -237,6 +240,7 @@ namespace COPriceEditor
                         lbxItems.Items.Add(itemStr);
                         lblStatus.Text = $"Loaded Item [{i.Get(Item.Atribute.ID)}]";
                     }));
+                    Thread.Sleep(0);
                 });
                 this.Invoke(new Action(() =>
                 {
@@ -245,6 +249,7 @@ namespace COPriceEditor
                     btnSave.Enabled = true;
                     btnSaveAs.Enabled = true;
                     btnDelete.Enabled = true;
+                    btnSearch.Enabled = true;
                 }));
                 CanSearch = true;
             } else
@@ -267,15 +272,6 @@ namespace COPriceEditor
             lblStatus.Text = "Loading... " + e.ProgressPercentage;
         }
 
-        private void TbxSearch_TextChanged(object sender, EventArgs e)
-        {
-            if (CanSearch)
-            {
-                CanSearch = false;
-                searchWorker.RunWorkerAsync();
-            }
-        }
-
         private void SearchWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             this.Invoke(new Action(() =>
@@ -287,6 +283,7 @@ namespace COPriceEditor
                     foreach (string itemStr in OriginalItemList)
                     {
                         lbxItems.Items.Add(itemStr);
+                        Thread.Sleep(0);
                     }
                 }
                 else
@@ -296,12 +293,14 @@ namespace COPriceEditor
                         if (itemStr.Contains(tbxSearch.Text))
                         {
                             itemStrsAdd.Add(itemStr);
+                            Thread.Sleep(0);
                         }
                     }
                     lbxItems.Items.Clear();
                     foreach (string itemStr in itemStrsAdd)
                     {
                         lbxItems.Items.Add(itemStr);
+                        Thread.Sleep(0);
                     }
                 }
                 CanSearch = true;
@@ -337,6 +336,15 @@ namespace COPriceEditor
                 Item it = CurrentItemtype.Items.Where(x => x.Get(Item.Atribute.ID) == ID.Trim()).FirstOrDefault();
                 lbxItems.Items.Remove(lbxItems.SelectedItem);
                 CurrentItemtype.RemoveItemByID(uint.Parse(ID));
+            }
+        }
+
+        private void BtnSearch_Click(object sender, EventArgs e)
+        {
+            if (CanSearch)
+            {
+                CanSearch = false;
+                searchWorker.RunWorkerAsync();
             }
         }
     }
