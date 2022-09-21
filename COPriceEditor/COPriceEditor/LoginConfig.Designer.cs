@@ -60,7 +60,7 @@
             this.Controls.Add(this.tbxLicenseId);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LoginConfig";
-            this.Text = "License Required for Settings";
+            this.Text = "License Premium Required for Settings";
             this.Load += new System.EventHandler(this.LoginConfig_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

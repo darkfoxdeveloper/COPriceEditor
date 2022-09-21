@@ -28,12 +28,22 @@ namespace COPriceEditor
                 ReloadFields();
             }
             ReloadFieldsDesign();
-            Models.LicenseManager lMan = new();
-            Models.Config.RegisteredLicenseId = "bdff59d4-65e2-4e82-a828-4fbaac37144a";
-            if (!lMan.IsValidLicense(Models.Config.RegisteredLicenseId))
+            Models.Config.LicenseManager = new("304b78f8-6cc5-4e75-ac41-c1546af055af");
+            if (!Models.Config.LicenseManager.IsEnabledLicense())
             {
-                Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is not valid and cannot run this App. {System.Environment.NewLine} License Expiration: {lMan.GetLicenseFromId(Models.Config.RegisteredLicenseId).LicenseExpiration} {System.Environment.NewLine} Enabled: {lMan.GetLicenseFromId(Models.Config.RegisteredLicenseId).Enabled}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+                Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is not valid and cannot run this App. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine} Enabled: {Models.Config.LicenseManager.RegisteredLicense.Enabled}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
                 Application.Exit();
+            } else
+            {
+                if (Models.Config.LicenseManager.IsExpired())
+                {
+                    Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is expired. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+                    Application.Exit();
+                }
+                else
+                {
+                    lblStatus.Text = $"License {Models.Config.LicenseManager.RegisteredLicense.Type} [Expires {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration}]";
+                }
             }
         }
 

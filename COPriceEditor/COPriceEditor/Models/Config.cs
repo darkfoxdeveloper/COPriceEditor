@@ -8,7 +8,7 @@ namespace COPriceEditor.Models
         public static bool EnablePreviewItemIcons = false;
         public static COPriceEditor.Config ConfigForm;
         public static LoginConfig LoginConfigForm;
-        public static string RegisteredLicenseId { get; set; }
+        public static LicenseManager LicenseManager;
     }
 
     public class ItemAttribute
