@@ -28,23 +28,23 @@ namespace COPriceEditor
                 ReloadFields();
             }
             ReloadFieldsDesign();
-            Models.Config.LicenseManager = new("304b78f8-6cc5-4e75-ac41-c1546af055af");
-            if (!Models.Config.LicenseManager.IsEnabledLicense())
-            {
-                Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is not valid and cannot run this App. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine} Enabled: {Models.Config.LicenseManager.RegisteredLicense.Enabled}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
-                Application.Exit();
-            } else
-            {
-                if (Models.Config.LicenseManager.IsExpired())
-                {
-                    Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is expired. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
-                    Application.Exit();
-                }
-                else
-                {
-                    lblStatus.Text = $"License {Models.Config.LicenseManager.RegisteredLicense.Type} [Expires {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration}]";
-                }
-            }
+            //Models.Config.LicenseManager = new("304b78f8-6cc5-4e75-ac41-c1546af055af");
+            //if (!Models.Config.LicenseManager.IsEnabledLicense())
+            //{
+            //    Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is not valid and cannot run this App. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine} Enabled: {Models.Config.LicenseManager.RegisteredLicense.Enabled}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+            //    Application.Exit();
+            //} else
+            //{
+            //    if (Models.Config.LicenseManager.IsExpired())
+            //    {
+            //        Krypton.Toolkit.KryptonMessageBox.Show($"Your LicenseId is expired. {System.Environment.NewLine} License Expiration: {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration} {System.Environment.NewLine}", "License not valid - COPriceEditor", MessageBoxButtons.OK, Krypton.Toolkit.KryptonMessageBoxIcon.ERROR);
+            //        Application.Exit();
+            //    }
+            //    else
+            //    {
+            //        lblStatus.Text = $"License {Models.Config.LicenseManager.RegisteredLicense.Type} [Expires {Models.Config.LicenseManager.RegisteredLicense.LicenseExpiration}]";
+            //    }
+            //}
         }
 
         public void ReloadFieldsDesign()
@@ -326,11 +326,19 @@ namespace COPriceEditor
         {
             if (keyData == Keys.F1)
             {
-                if (Models.Config.LoginConfigForm.IsDisposed)
+                //if (Models.Config.LoginConfigForm.IsDisposed)
+                //{
+                //Models.Config.LoginConfigForm = new LoginConfig();
+                //}
+                //Models.Config.LoginConfigForm.Show();
+                if (Models.Config.ConfigForm == null || Models.Config.ConfigForm.IsDisposed)
                 {
-                    Models.Config.LoginConfigForm = new LoginConfig();
+                    Models.Config.ConfigForm = new Config();
                 }
-                Models.Config.LoginConfigForm.Show();
+                if (!Models.Config.ConfigForm.Visible)
+                {
+                    Models.Config.ConfigForm.Show(this);
+                }
                 return true;
             }
 
